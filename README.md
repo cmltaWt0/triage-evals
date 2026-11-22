@@ -8,12 +8,14 @@ can only be measured by running the models, several times, against cases with kn
 
 **Everything under `cases/` is invented.** The projects and their repositories do not exist, and no advisory there
 describes a real vulnerability, also where it names real software (APT) with version numbers. The other package names
-(`pixloom`, `queuemaster`, `gitpebble`) were in no public registry when they were chosen. Do not install what the
+(`pixloom`, `queuemaster`, `gitpebble`, `tokenbrine`) were in no public registry when they were chosen. Do not install what the
 invented repositories list, and do not feed the advisory records to a scanner or an advisory database.
 
 **Not deterministic.** The same case can pass twice and fail once: each case runs three times by default; read the
-rates, never a single run. Every sample costs subscription usage: a full reviewer run is 21 Codex calls of 15 to 30
-seconds, an agent sample about a minute of Claude.
+rates, never a single run. Every sample costs subscription usage: a full reviewer run is 42 Codex calls of 15 to 30
+seconds, an agent sample about a minute of Claude, an end-to-end sample that and two or three Codex calls. A plan's
+usage limit can end a run early: a sample then has no verdict and an `error` that says so, and its rate means nothing.
+Count the calls before a batch and run one eval at a time.
 
 **Reproduced from the engine.** The report review's prompt is cut out of the engine's gate script
 (`hooks/review-gate.sh`, stage `gate.reportReview`), never retyped; a piece of it not found exactly once stops the eval
@@ -117,9 +119,10 @@ means = "objects to the build and CI exclusion"
 
 Then `./evals run agent --cases <folder> --agent-answer <a report>` tries it without a model. The named objections and
 the `checked` patterns are regular expressions over free text: a heuristic, kept out of the score; check a new one
-against real review texts first. The two invented projects here (`shop`, and `shop-variant`, where a tool installed in
-the final image runs in production) keep their quirks: a final image stage that copies a manifest without installing
-it is part of the case, not a bug to fix.
+against real review texts first. The three invented projects here (`shop`; `shop-variant`, where a tool installed in
+the final image is invoked by the application; `shop-setting`, where that tool clones only a URL fixed in the code and
+a library is affected only with a setting that is decided at run time) keep their quirks: a final image stage that
+copies a manifest without installing it is part of the case, not a bug to fix.
 
 An invented advisory must not be taken for a real one. Give it no alias in the form of a CVE or GHSA id, name a
 package that is in no public registry (look it up in the ecosystem the record names and in PyPI, npm and crates.io
