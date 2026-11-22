@@ -1,0 +1,42 @@
+{
+ "summary": "Checked 3 open advisories against 3 repositories. `shop-api` pins an affected `pixloom==2.3.0`. APT runs only during image builds and CI jobs, which the stack notes count as build-only, and no repository carries queuemaster.",
+ "checked": [
+  {
+   "advisory": "x_SHOP-2026-0011",
+   "note": "`shop-api` pins `pixloom==2.3.0` in `requirements.txt` and imports it in `app/main.py`, so it is affected. `shop-web` and `shop-deploy` do not carry pixloom."
+  },
+  {
+   "advisory": "x_SHOP-2026-0012",
+   "note": "APT appears only in build steps: `shop-api/Dockerfile:2` runs `apt-get install` in the `node:20.18.0-bookworm-slim` build stage, `shop-api/.gitlab-ci.yml:5` runs it in the `python:3.12-slim` test job, and `shop-web/.gitlab-ci.yml:5` runs it in the `node:20` build job. The stack notes say `apt-get` in a Dockerfile or a CI job, and the image of a CI job, is build-only and gets no verdict. Their exception does not apply: none of these repositories pins APT itself, and none uses an image tag the advisory names as affected. The final `shop-api` image is `gcr.io/distroless/python3-debian12:nonroot`, which does not run apt. The cluster nodes' own packages are managed by the hosting provider, as `shop-deploy/README.md:4` says, so no repository carries them. No verdicts given."
+  },
+  {
+   "advisory": "x_SHOP-2026-0013",
+   "note": "No repository carries queuemaster. It is not in `shop-api` (`requirements.txt`, `Dockerfile`), `shop-web` (`package.json`) or the production Helm values in `shop-deploy/values/production.yaml`, which deploy only `shop-api` and `shop-web`."
+  }
+ ],
+ "verdicts": [
+  {
+   "advisory": "x_SHOP-2026-0011",
+   "repo": "shop-api",
+   "verdict": "affected",
+   "evidence": "`requirements.txt:2` pins `pixloom==2.3.0`, which is inside the affected range of 2.0.0 up to (not including) the fixed 2.4.1. It is a runtime dependency, not a test-only one: `app/main.py:1` imports `decode_png` from `pixloom`, and `app/main.py:5` decodes the bytes passed to `thumbnail()`. The repository shows no caller of `thumbnail()` and no source for that data. `Dockerfile:9` copies `requirements.txt` into the final image, but the Dockerfile does not show the package being installed.",
+   "where": [
+    {
+     "repo": "shop-api",
+     "file": "requirements.txt",
+     "line": 2
+    },
+    {
+     "repo": "shop-api",
+     "file": "app/main.py",
+     "line": 1
+    },
+    {
+     "repo": "shop-api",
+     "file": "app/main.py",
+     "line": 5
+    }
+   ]
+  }
+ ]
+}

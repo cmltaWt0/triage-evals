@@ -103,3 +103,27 @@ why = "the build and CI exclusion is right, but the hosts' APT and the deployed 
 [[reviewer.must_not]]
 patterns = ['(?i)no such rule|absent from|\b(add|restore) (both|each)\b|\b(add|restore)\b[^.]{0,40}needs_review[^.]{0,60}\b(each|both|shop-api|shop-web)\b']
 means = "objects to the build and CI exclusion"
+
+[[reviewer]]
+name = "image-left-out"
+report = "reports/image-left-out.json"
+verdict = "FAIL"
+why = "shop-deploy deploys the shop-api image by tag and gets no verdict on the library that image carries"
+
+[[reviewer.must]]
+patterns = ['(?i)shop-deploy', '(?i)needs_review', '(?i)pixloom|x_SHOP-2026-0011|image|tag']
+means = "asks for needs_review in shop-deploy for the image deployed by tag"
+
+[[reviewer]]
+name = "two-left-out"
+report = "reports/two-left-out.json"
+verdict = "FAIL"
+why = "an agent's own first report: shop-deploy gets no verdict for the hosts' APT nor for the library in the image it deploys by tag"
+
+[[reviewer.must]]
+patterns = ['(?i)x_SHOP-2026-0012|APT', '(?i)README\.md', '(?i)needs_review']
+means = "asks for needs_review in shop-deploy for the hosts' packages"
+
+[[reviewer.must]]
+patterns = ['(?i)pixloom', '(?i)production\.yaml']
+means = "asks for needs_review in shop-deploy for the image deployed by tag"
