@@ -1,0 +1,46 @@
+{
+ "id": "x_SHOP-2026-0011",
+ "modified": "2026-11-10T09:00:00Z",
+ "published": "2026-11-09T09:00:00Z",
+ "aliases": [
+  "EXAMPLE-2026-0011"
+ ],
+ "summary": "pixloom: heap overflow in the PNG decoder (CVSS 8.1)",
+ "details": "pixloom before 2.4.1 overflows a heap buffer when it decodes a crafted PNG file. A service that decodes PNG files from untrusted sources with pixloom 2.0.0 to 2.4.0 can be made to crash or run code. Fixed in pixloom 2.4.1. Projects that only list pixloom for tests are not exposed in production.",
+ "severity": [
+  {
+   "type": "CVSS_V3",
+   "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:R/S:U/C:H/I:H/A:H"
+  }
+ ],
+ "affected": [
+  {
+   "package": {
+    "ecosystem": "PyPI",
+    "name": "pixloom"
+   },
+   "ranges": [
+    {
+     "type": "ECOSYSTEM",
+     "events": [
+      {
+       "introduced": "2.0.0"
+      },
+      {
+       "fixed": "2.4.1"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "references": [
+  {
+   "type": "ADVISORY",
+   "url": "https://advisories.example.com/SHOP-2026-0011"
+  }
+ ],
+ "database_specific": {
+  "note": "Invented for the triage-evals test cases. Not a real advisory: it describes no real vulnerability."
+ }
+}

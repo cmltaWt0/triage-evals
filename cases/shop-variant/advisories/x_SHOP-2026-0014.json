@@ -1,0 +1,40 @@
+{
+ "id": "x_SHOP-2026-0014",
+ "modified": "2026-11-14T09:00:00Z",
+ "published": "2026-11-14T09:00:00Z",
+ "aliases": [
+  "EXAMPLE-2026-0014"
+ ],
+ "summary": "gitpebble: a crafted repository URL runs commands during clone (CVSS 8.8)",
+ "details": "gitpebble 3.0.0 to 3.1.9 passes part of a repository URL to a shell when it clones. Anything that clones a URL it does not control with gitpebble can be made to run commands. Fixed in gitpebble 3.2.0.",
+ "affected": [
+  {
+   "package": {
+    "ecosystem": "Debian:12",
+    "name": "gitpebble"
+   },
+   "ranges": [
+    {
+     "type": "ECOSYSTEM",
+     "events": [
+      {
+       "introduced": "3.0.0"
+      },
+      {
+       "fixed": "3.2.0"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "references": [
+  {
+   "type": "ADVISORY",
+   "url": "https://advisories.example.com/SHOP-2026-0014"
+  }
+ ],
+ "database_specific": {
+  "note": "Invented for the triage-evals test cases. Not a real advisory: it describes no real vulnerability."
+ }
+}

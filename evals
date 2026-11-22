@@ -1,0 +1,9 @@
+#!/usr/bin/env python3
+"""Evals of Arceus's advisory triage: ./evals run reviewer|agent|e2e, ./evals report FILE, ./evals compare OLD NEW."""
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from triage_evals.cli import main  # noqa: E402
+
+sys.exit(main(sys.argv[1:]))

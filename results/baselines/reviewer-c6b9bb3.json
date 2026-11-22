@@ -1,0 +1,559 @@
+{
+ "eval": "reviewer",
+ "date": "2026-11-21T23:47:17+00:00",
+ "target": {
+  "arceus": "c6b9bb3f74dc7049719ab39d7eb3fdb477755407",
+  "arceus_dirty": false,
+  "engine": "d59da14949e2b7a8a92d455e2af66a1f51d5912b",
+  "engine_pinned": "d59da14949e2b7a8a92d455e2af66a1f51d5912b",
+  "codex": "codex-cli 0.171.0",
+  "claude": null,
+  "review_model": null,
+  "review_effort": null,
+  "agent_model": null
+ },
+ "options": {
+  "cases": "*",
+  "samples": 3
+ },
+ "cases_hash": "4d1d2cbf0b0c",
+ "cases": [
+  {
+   "id": "shop/clean-follows-notes",
+   "hash": "aae1b33e5b97",
+   "expected": {
+    "name": "clean-follows-notes",
+    "report": "reports/clean-follows-notes.json",
+    "verdict": "PASS",
+    "why": "every verdict and every exclusion follows the notes, and the APT note names what was left out and by which rule"
+   },
+   "samples": [
+    {
+     "verdict": "PASS",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: PASS\n",
+     "open": 0,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 12,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "PASS",
+     "ok": true,
+     "must": [],
+     "must_not": [],
+     "objections_ok": null
+    },
+    {
+     "verdict": "PASS",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: PASS\n",
+     "open": 0,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 12,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "PASS",
+     "ok": true,
+     "must": [],
+     "must_not": [],
+     "objections_ok": null
+    },
+    {
+     "verdict": "PASS",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: PASS\n",
+     "open": 0,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 13,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "PASS",
+     "ok": true,
+     "must": [],
+     "must_not": [],
+     "objections_ok": null
+    }
+   ],
+   "passed": 3,
+   "of": 3
+  },
+  {
+   "id": "shop/earlier-verdict-turned-by-notes",
+   "hash": "aae1b33e5b97",
+   "expected": {
+    "name": "earlier-verdict-turned-by-notes",
+    "notes": "notes-earlier.md",
+    "earlier": "reports/earlier-run1.json",
+    "report": "reports/earlier-run2.json",
+    "verdict": "PASS",
+    "why": "the second run turns two earlier needs_review into not_affected, citing the notes' rule that says so"
+   },
+   "samples": [
+    {
+     "verdict": "PASS",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: PASS\n",
+     "open": 0,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 13,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "PASS",
+     "ok": true,
+     "must": [],
+     "must_not": [],
+     "objections_ok": null
+    },
+    {
+     "verdict": "PASS",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: PASS\n",
+     "open": 0,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 19,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "PASS",
+     "ok": true,
+     "must": [],
+     "must_not": [],
+     "objections_ok": null
+    },
+    {
+     "verdict": "PASS",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: PASS\n",
+     "open": 0,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 12,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "PASS",
+     "ok": true,
+     "must": [],
+     "must_not": [],
+     "objections_ok": null
+    }
+   ],
+   "passed": 3,
+   "of": 3
+  },
+  {
+   "id": "shop/rule-not-in-notes",
+   "hash": "aae1b33e5b97",
+   "expected": {
+    "name": "rule-not-in-notes",
+    "report": "reports/rule-not-in-notes.json",
+    "verdict": "FAIL",
+    "why": "pixloom is left out by a rule ('behind the upload size limit') that the notes do not contain",
+    "must": [
+     {
+      "patterns": [
+       "(?i)no such rule|absent from|not in .{0,20}notes"
+      ],
+      "means": "says the notes hold no such rule"
+     }
+    ]
+   },
+   "samples": [
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. In `checked` for `x_SHOP-2026-0011`, the report says `shop-api` was “left out by the team's notes' rule that image-processing libraries behind the upload size limit are not exposed and get no verdict.” `notes.md` contains no such rule. It explicitly counts libraries imported by the deployed application, and the cited code shows no upload size limit. Add an `affected` verdict for `shop-api` citing `requirements.txt:2`, which pins `pixloom==2.3.0` within the advisory’s affected range, and `app/main.py:1` and `app/main.py:5`, which show the application importing and calling `decode_png`. Correct the `checked` note and remove the same unsupported exclusion from `summary`.\n",
+     "open": 1,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 21,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "says the notes hold no such rule",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. In `checked` for `x_SHOP-2026-0011`, the report cites “the team's notes' rule that image-processing libraries behind the upload size limit are not exposed and get no verdict.” `notes.md` contains no such rule. It explicitly counts libraries imported by the deployed application, and `shop-api/app/main.py:1` and `:4–5` show the import and decoder call without establishing any upload size limit. Add an `affected` verdict for `shop-api` citing those lines and `shop-api/requirements.txt:2`, which pins `pixloom==2.3.0` within the advisory’s affected range. Revise `checked` and the summary to reflect that finding.\n",
+     "open": 1,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 21,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "says the notes hold no such rule",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. The `checked` entry for `x_SHOP-2026-0011` claims that “image-processing libraries behind the upload size limit are not exposed and get no verdict.” `notes.md` contains no such rule, and the cited code shows no upload size limit. The notes explicitly count libraries imported by the deployed application. `shop-api/requirements.txt:2` pins `pixloom==2.3.0` within the affected range, and `shop-api/app/main.py:1` and `shop-api/app/main.py:5` show the import and PNG decoder call. Add an `affected` verdict for `shop-api` with those references, remove the unsupported exclusion from `checked`, and update the summary to reflect the verdict.\n",
+     "open": 1,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 15,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "says the notes hold no such rule",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    }
+   ],
+   "passed": 3,
+   "of": 3
+  },
+  {
+   "id": "shop/vague-note",
+   "hash": "aae1b33e5b97",
+   "expected": {
+    "name": "vague-note",
+    "report": "reports/vague-note.json",
+    "verdict": "FAIL",
+    "why": "the APT note says only that the rest is left out per the notes: not what, not where, not by which rule",
+    "must": [
+     {
+      "patterns": [
+       "(?i)the rest is left out"
+      ],
+      "means": "quotes the vague note"
+     }
+    ]
+   },
+   "samples": [
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. The `checked` note for `x_SHOP-2026-0012` says, “The rest is left out per the team's notes.” It does not identify which repositories are excluded, where APT runs, or why the build-only rule applies. Name `shop-api` and `shop-web`, and cite `shop-api/Dockerfile:1–2` for the asset build, `shop-api/.gitlab-ci.yml:1–7` for the test job, and `shop-web/.gitlab-ci.yml:1–9` for the storefront build. Explain that the notes exclude APT used only in these stages because none of the cited configurations pins APT to an advisory-affected version.\n",
+     "open": 1,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 14,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "quotes the vague note",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. The `checked` note for `x_SHOP-2026-0012` says “The rest is left out per the team's notes.” It does not identify the excluded repositories, where `apt-get` runs, or the rule that excludes it. Name `shop-api`’s image build (`Dockerfile:1–2`) and CI test job (`.gitlab-ci.yml:3–7`), and `shop-web`’s CI build job (`.gitlab-ci.yml:3–9`). Explain that the stack notes exclude tools used only in builds or CI unless the repository pins the tool to a version named as affected. None of those files establishes such an APT version pin.\n",
+     "open": 1,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 14,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "quotes the vague note",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. In `checked` for `x_SHOP-2026-0012`, “The rest is left out per the team's notes” does not identify the excluded repositories or where APT runs. Name `shop-api`’s asset build (`Dockerfile:1–2`) and test job (`.gitlab-ci.yml:3–5`), and `shop-web`’s CI build (`.gitlab-ci.yml:3–5`). Explain that the notes exclude these build and test uses and that the checked-in image tags do not establish an affected APT version that would trigger the pinning exception.\n",
+     "open": 1,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 20,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "quotes the vague note",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    }
+   ],
+   "passed": 3,
+   "of": 3
+  },
+  {
+   "id": "shop/left-out-unsaid",
+   "hash": "aae1b33e5b97",
+   "expected": {
+    "name": "left-out-unsaid",
+    "report": "reports/left-out-unsaid.json",
+    "verdict": "FAIL",
+    "why": "APT in builds and CI is left out without saying so, and the hosts and the deployed pixloom get no verdict",
+    "must": [
+     {
+      "patterns": [
+       "(?i)no repository carries APT"
+      ],
+      "means": "quotes the note that leaves APT out without naming the rule"
+     }
+    ]
+   },
+   "samples": [
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. `x_SHOP-2026-0012` says “No repository carries APT in what it ships.” The `checked` note omits the exclusions required by `notes.md`. `shop-api` runs `apt-get` in its asset build (`Dockerfile:1–2`) and test job (`.gitlab-ci.yml:3–5`). `shop-web` runs it in its storefront build (`.gitlab-ci.yml:3–5`). Name both repositories and these uses, and explain that the notes exclude build and test tooling unless the repository pins an affected version of that tool. The cited image tags do not pin an APT version.\n2. `x_SHOP-2026-0011` says “`shop-deploy` [does] not carry pixloom.” `shop-deploy/values/production.yaml:2–3` selects the production API image tagged `1.8.2`, but those values do not establish which `pixloom` version the image contains. Add a `needs_review` verdict for `shop-deploy`, cite the image and tag, and say that the deployed image’s package inventory would settle it.\n3. The `shop-api` evidence says “The pinned version the application is built against is still the affected one.” `requirements.txt:2` establishes an affected source pin, and `app/main.py:1` and `app/main.py:5` establish that the application imports and uses it. The only installation shown is in the test job (`.gitlab-ci.yml:3–7`). Keep the `affected` verdict grounded in the runtime dependency pin and remove the unsupported claim about what the production image was built against.\n",
+     "open": 3,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 25,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "quotes the note that leaves APT out without naming the rule",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. `x_SHOP-2026-0012` says “No repository carries APT in what it ships.” The `checked` note omits the exclusions required by `notes.md`. `shop-api` runs `apt-get` in the image’s asset-build stage (`Dockerfile:2`) and in its CI test job (`.gitlab-ci.yml:5`). `shop-web` runs it in its CI build job (`.gitlab-ci.yml:5`). Name both repositories and all three uses, cite the build- and test-only rule, and explain that none of the three references pins an APT version identified as affected. The summary’s “No repository carries APT” should reflect those exclusions and avoid implying that the provider-managed production hosts were verified. `shop-deploy/README.md:4` says their packages are outside the repository.\n2. The `x_SHOP-2026-0011` evidence says “The pinned version the application is built against is still the affected one.” The pin and application import support `affected` for `shop-api` on the basis of the declared dependency. The only install shown is in CI (`.gitlab-ci.yml:6`), and the final image stage copies the manifest and application without installing the dependency (`Dockerfile:7–12`). Remove the unsupported build claim and ground the verdict in the pin and import.\n",
+     "open": 2,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 19,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "quotes the note that leaves APT out without naming the rule",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. The `x_SHOP-2026-0012` note, “No repository carries APT in what it ships,” omits the exclusions required by `notes.md`. `shop-api` runs `apt-get` in the asset build stage at `Dockerfile:2` and in a CI test job at `.gitlab-ci.yml:5`. `shop-web` runs it in a CI build job at `.gitlab-ci.yml:5`. Name both repositories, identify where APT runs, and cite the rule excluding build- and test-only tools unless the repository pins the tool itself to an affected version.\n2. The `x_SHOP-2026-0011` note says “`shop-web` and `shop-deploy` do not carry pixloom.” `shop-deploy` deploys the API image tagged `1.8.2` at `values/production.yaml:1–3`. The API imports `pixloom`, and the tag does not establish which dependency version is in the deployed image. Give `shop-deploy` a `needs_review` verdict and identify the deployed image’s package inventory as the evidence that would settle it.\n3. The `shop-api` evidence claims that “the pinned version the application is built against is still the affected one.” `requirements.txt:2` establishes the affected pin, `app/main.py:1` establishes the runtime import, and `.gitlab-ci.yml:6` establishes installation in the test job. `Dockerfile:7–12` copies the requirements file into the final stage without an installation step. Keep the `affected` verdict on the application’s pin and import, and remove the unsupported claim about the image build.\n",
+     "open": 3,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 24,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "quotes the note that leaves APT out without naming the rule",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    }
+   ],
+   "passed": 3,
+   "of": 3
+  },
+  {
+   "id": "shop/follows-notes",
+   "hash": "aae1b33e5b97",
+   "expected": {
+    "name": "follows-notes",
+    "report": "reports/follows-notes.json",
+    "verdict": "FAIL",
+    "why": "the build and CI exclusion is right, but the hosts' APT and the deployed pixloom get no needs_review",
+    "must_not": [
+     {
+      "patterns": [
+       "(?i)no such rule|absent from|\\b(add|restore) (both|each)\\b|\\b(add|restore)\\b[^.]{0,40}needs_review[^.]{0,60}\\b(each|both|shop-api|shop-web)\\b"
+      ],
+      "means": "objects to the build and CI exclusion"
+     }
+    ]
+   },
+   "samples": [
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. `x_SHOP-2026-0011` says “`shop-web` and `shop-deploy` do not carry pixloom.” `shop-deploy` deploys `shop-api:1.8.2` in `values/production.yaml:2–3`, and the stack notes count deployed application libraries. Give `shop-deploy` a `needs_review` verdict and identify the deployed image’s package inventory or build provenance as the evidence needed to determine its `pixloom` version.\n2. `x_SHOP-2026-0012` says “The cluster nodes’ packages are not in any repository … so no repository here carries them.” `shop-deploy/README.md:4` establishes that the hosting provider manages those packages. The stack notes explicitly count deployed host packages. Give `shop-deploy` a `needs_review` verdict and specify that the provider’s node OS, APT version, and package installation configuration would settle it. Keep the build-only exclusions for `shop-api` and `shop-web`.\n3. The `shop-api` evidence for `x_SHOP-2026-0011` says “The pinned version the application is built against is still the affected one.” `requirements.txt:2` establishes the affected runtime dependency pin, and `app/main.py:1` and `:5` establish its use. The final Docker stage only copies the requirements file, and the only visible install is in the CI test job at `.gitlab-ci.yml:6`. Keep the `affected` verdict on the strength of the pin and remove the unsupported build claim.\n",
+     "open": 3,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 18,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [],
+     "must_not": [
+      {
+       "means": "objects to the build and CI exclusion",
+       "found": false
+      }
+     ],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. The `x_SHOP-2026-0011` checked note says “`shop-web` and `shop-deploy` do not carry pixloom.” `shop-deploy/values/production.yaml:1–3` deploys `shop-api:1.8.2`, and the API source imports `pixloom`. The deployment repository does not establish which build or dependency set that tag contains. Give `shop-deploy` a `needs_review` verdict and say that the deployed image’s package inventory would settle it.\n2. The `shop-api` evidence says “The pinned version the application is built against is still the affected one.” `Dockerfile:9` copies `requirements.txt`, and the final stage has no dependency installation step. The only explicit install is in the test job at `.gitlab-ci.yml:6`. Keep `affected` on the strength of the affected application dependency pin and import, and remove the unsupported claim about what the production build uses.\n",
+     "open": 2,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 23,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [],
+     "must_not": [
+      {
+       "means": "objects to the build and CI exclusion",
+       "found": false
+      }
+     ],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. For `x_SHOP-2026-0012`, the report says the cluster nodes’ packages “are not in any repository” and concludes that no repository carries them. `shop-deploy/README.md:4` establishes that the hosting provider manages those nodes. The stack notes explicitly include production host packages, so the build-only exclusion does not apply. Add a `needs_review` verdict for `shop-deploy` and identify the production node OS, installed APT version, and package installation configuration as the evidence needed to settle it.\n2. For `x_SHOP-2026-0011`, the report says `shop-deploy` “does not carry pixloom.” `shop-deploy/values/production.yaml:1–3` selects API image tag `1.8.2`, whose contents the report does not establish. Give `shop-deploy` a `needs_review` verdict pending the deployed image’s package inventory or equivalent build provenance.\n3. The `shop-api` evidence says “the pinned version the application is built against is still the affected one.” `requirements.txt:2` proves the affected pin and `app/main.py:1` and `:5` prove application use. `Dockerfile:9` only copies the requirements file, and the only visible install is in the test job at `.gitlab-ci.yml:6`. Keep the `affected` verdict based on the application pin and import, and remove the unsupported claim about what the image build installs.\n",
+     "open": 3,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 18,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [],
+     "must_not": [
+      {
+       "means": "objects to the build and CI exclusion",
+       "found": false
+      }
+     ],
+     "objections_ok": true
+    }
+   ],
+   "passed": 3,
+   "of": 3
+  },
+  {
+   "id": "shop-variant/misapplied-rule",
+   "hash": "e7cf62ea12b2",
+   "expected": {
+    "name": "misapplied-rule",
+    "report": "reports/misapplied-rule.json",
+    "verdict": "FAIL",
+    "why": "gitpebble is called build-only, but the final image installs it and the deployed service runs it",
+    "must": [
+     {
+      "patterns": [
+       "(?i)gitpebble",
+       "sync\\.py"
+      ],
+      "means": "points at the deployed service's own call of gitpebble (app/sync.py)"
+     }
+    ]
+   },
+   "samples": [
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. The `x_SHOP-2026-0014` checked note says “`shop-api` is left out by the notes' rule that `apt-get` or `git` in a Dockerfile is a build-only tool and gets no verdict.” The advisory concerns `gitpebble`. `shop-api/Dockerfile:8` pins `gitpebble=3.1.0-1` in the final image, and `shop-api/app/sync.py:5–6` documents the admin API call and shows it using `gitpebble` to clone a supplier repository URL. The notes count deployed tools as shipped and also require verdicts for build-only tools pinned to affected versions. Replace the exclusion with an `affected` verdict for `shop-api`, citing the pin and runtime call.\n2. The `x_SHOP-2026-0014` checked note omits `shop-deploy`. `shop-deploy/values/production.yaml:2–3` deploys the `shop-api` image at tag `1.8.2`. Add a `needs_review` verdict for `shop-deploy` and explain that inspecting the deployed image’s package inventory would establish which `gitpebble` version it carries. Update the checked note to account for both repositories.\n3. The summary says “`gitpebble` is build-only by the notes.” Replace that claim with the finding that `shop-api` ships an affected pin and the version in the deployed image needs review.\n",
+     "open": 3,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 21,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "points at the deployed service's own call of gitpebble (app/sync.py)",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. The `checked` note for `x_SHOP-2026-0014` says “`shop-api` is left out by the notes’ rule.” The notes exclude tools used only during builds or tests and explicitly include tools used by the deployed service. `shop-api/Dockerfile:8` pins `gitpebble=3.1.0-1` in the final image, within the advisory’s affected range. `shop-api/app/sync.py:4–6` identifies the admin API’s catalog import and invokes `gitpebble clone` with the supplied URL. Give `shop-api` an `affected` verdict citing those lines, and correct the `checked` note and summary.\n2. The same `checked` note omits `shop-deploy`. `shop-deploy/values/production.yaml:2–3` selects the `shop-api` image tagged `1.8.2`, whose `gitpebble` version cannot be determined from the repository. Add a `needs_review` verdict citing those lines and identify the deployed image’s package inventory as the evidence needed to settle it.\n",
+     "open": 2,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 17,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "points at the deployed service's own call of gitpebble (app/sync.py)",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    },
+    {
+     "verdict": "FAIL",
+     "complete": true,
+     "text": "STATE: COMPLETE\nVERDICT: FAIL\n\n1. `x_SHOP-2026-0014` incorrectly says that “`shop-api` is left out by the notes' rule that `apt-get` or `git` in a Dockerfile is a build-only tool.” `shop-api/Dockerfile:8` pins `gitpebble=3.1.0-1` in the final image, and `shop-api/app/sync.py:5–6` describes the admin API caller and invokes `gitpebble clone` with the supplied URL. The notes count runtime tools as shipped and also require judging build-only tools pinned to affected versions. Add an `affected` verdict for `shop-api` with both references.\n2. The same `checked` entry omits `shop-deploy`, which deploys the API image by tag. `shop-deploy/values/production.yaml:2–3` selects `shop-api:1.8.2`, whose `gitpebble` version and runtime use are unresolved. Add a `needs_review` verdict and identify the deployed image’s package inventory and catalog import behavior as the evidence needed to settle it.\n3. The summary repeats that “`gitpebble` is build-only by the notes.” Replace that claim with the affected API pin and the need to verify the production image.\n",
+     "open": 3,
+     "stall": 0,
+     "rc": 0,
+     "seconds": 16,
+     "model": "gpt-6.2-sol, effort none",
+     "expected": "FAIL",
+     "ok": true,
+     "must": [
+      {
+       "means": "points at the deployed service's own call of gitpebble (app/sync.py)",
+       "found": true
+      }
+     ],
+     "must_not": [],
+     "objections_ok": true
+    }
+   ],
+   "passed": 3,
+   "of": 3
+  }
+ ],
+ "reported": {
+  "reviewer": [
+   "gpt-6.2-sol, effort none"
+  ],
+  "agent": []
+ }
+}

@@ -1,0 +1,71 @@
+# The shop project with one change: the final image of shop-api installs gitpebble with apt-get, pinned to an affected
+# version, and the deployed service runs it (app/sync.py) to clone a supplier's repository. A fourth advisory names
+# gitpebble. The notes are the shop's. Nothing here is real.
+
+repos = ["shop-api", "shop-web", "shop-deploy"]  # in the order the code host lists them
+
+# -- the agent and e2e evals: the shop's answer key, plus gitpebble. A cell not listed expects no verdict.
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0011"
+repo = "shop-api"
+verdict = "affected"
+why = "requirements.txt pins pixloom 2.3.0, inside the affected 2.0.0 to 2.4.0, and app/main.py decodes PNG with it"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0011"
+repo = "shop-deploy"
+verdict = "needs_review"
+why = "production runs the shop-api image by tag; which pixloom that image holds is not in the repository"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-deploy"
+verdict = "needs_review"
+why = "the nodes' own APT is a host package the notes count as shipped, and it is not in the repository"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-api"
+verdict = "none"
+why = "apt-get runs only while the images are built and in a CI job, which the notes leave out"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-web"
+verdict = "none"
+why = "apt-get runs only in the CI build job, which the notes leave out"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0013"
+verdict = "none"
+why = "no repository ships, pins or deploys queuemaster"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0014"
+repo = "shop-api"
+verdict = "affected"
+why = "Dockerfile:8 installs gitpebble 3.1.0 in the final image and app/sync.py runs it in the deployed service"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0014"
+repo = "shop-deploy"
+verdict = ["needs_review", "none"]
+why = "which gitpebble the deployed image holds is not in the repository, as for pixloom; this cell was left open"
+
+[[agent.checked]]
+advisory = "x_SHOP-2026-0012"
+patterns = ['shop-api', 'shop-web', '(?i)build[- ]only|only (while|when|at|in|during) .{0,60}(build|CI|test)|not shipped']
+why = "the notes ask the advisory's note to name what their rule left out and to say that it is build-only"
+
+# -- the reviewer eval
+
+[[reviewer]]
+name = "misapplied-rule"
+report = "reports/misapplied-rule.json"
+verdict = "FAIL"
+why = "gitpebble is called build-only, but the final image installs it and the deployed service runs it"
+
+[[reviewer.must]]
+patterns = ['(?i)gitpebble', 'sync\.py']
+means = "points at the deployed service's own call of gitpebble (app/sync.py)"

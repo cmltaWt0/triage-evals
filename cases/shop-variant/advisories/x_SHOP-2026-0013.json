@@ -1,0 +1,40 @@
+{
+ "id": "x_SHOP-2026-0013",
+ "modified": "2026-11-13T09:00:00Z",
+ "published": "2026-11-13T09:00:00Z",
+ "aliases": [
+  "EXAMPLE-2026-0013"
+ ],
+ "summary": "queuemaster: unauthenticated access to the admin API (CVSS 9.1)",
+ "details": "queuemaster 4.0 to 4.2.5, a message broker, serves its admin API without authentication when `admin.listen` is not set. Fixed in 4.2.6.",
+ "affected": [
+  {
+   "package": {
+    "ecosystem": "crates.io",
+    "name": "queuemaster"
+   },
+   "ranges": [
+    {
+     "type": "ECOSYSTEM",
+     "events": [
+      {
+       "introduced": "4.0"
+      },
+      {
+       "fixed": "4.2.6"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "references": [
+  {
+   "type": "ADVISORY",
+   "url": "https://advisories.example.com/SHOP-2026-0013"
+  }
+ ],
+ "database_specific": {
+  "note": "Invented for the triage-evals test cases. Not a real advisory: it describes no real vulnerability."
+ }
+}

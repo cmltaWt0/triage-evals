@@ -1,0 +1,46 @@
+{
+ "id": "x_SHOP-2026-0012",
+ "modified": "2026-11-12T09:00:00Z",
+ "published": "2026-11-11T09:00:00Z",
+ "aliases": [
+  "EXAMPLE-2026-0012"
+ ],
+ "summary": "APT: a package can be swapped by a machine in the middle during installation (CVSS 7.7)",
+ "details": "APT 2.6.0 to 2.6.1 (Debian 12) and 2.7.0 to 2.8.3 (Ubuntu 24.04) accept a package whose signature check was skipped after a crafted redirect, so a machine in the middle of the download can have its own package installed as root. Fixed in APT 2.6.2 and 2.8.4. Everything that runs `apt-get install` or `apt install` over a network it does not control is exposed: hosts, and also image builds and CI jobs that install packages while they run, since what they install ends up in the image or the artifact. Check the APT version of every base image and CI image that runs apt.",
+ "severity": [
+  {
+   "type": "CVSS_V3",
+   "score": "CVSS:3.1/AV:N/AC:H/PR:N/UI:N/S:C/C:H/I:H/A:N"
+  }
+ ],
+ "affected": [
+  {
+   "package": {
+    "ecosystem": "Debian:12",
+    "name": "apt"
+   },
+   "ranges": [
+    {
+     "type": "ECOSYSTEM",
+     "events": [
+      {
+       "introduced": "2.6.0"
+      },
+      {
+       "fixed": "2.6.2"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "references": [
+  {
+   "type": "ADVISORY",
+   "url": "https://advisories.example.com/SHOP-2026-0012"
+  }
+ ],
+ "database_specific": {
+  "note": "Invented for the triage-evals test cases. Not a real advisory: it describes no real vulnerability."
+ }
+}

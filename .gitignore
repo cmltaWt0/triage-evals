@@ -1,0 +1,9 @@
+# Real projects' cases: never committed.
+/cases-private/
+# The work folder: case repositories, run state, the fetched engine, temporary files.
+/.work/
+# Result files, except the recorded baselines.
+/results/*
+!/results/baselines/
+__pycache__/
+.pytest_cache/

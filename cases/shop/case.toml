@@ -1,0 +1,105 @@
+# The invented shop project: three repositories, three advisories as OSV records (a library that ships, APT, whose
+# advisory explicitly covers builds and CI, and a broker nobody carries), and the team's notes with the rule that a
+# tool that runs only in builds and CI gets no verdict. Nothing here is real.
+
+repos = ["shop-api", "shop-web", "shop-deploy"]  # in the order the code host lists them
+
+# -- the agent and e2e evals: the answer key. A cell not listed expects no verdict; a cell without `repo` is every
+# -- repository. `verdict` is a word, or a list of acceptable words; "none" is no verdict.
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0011"
+repo = "shop-api"
+verdict = "affected"
+why = "requirements.txt pins pixloom 2.3.0, inside the affected 2.0.0 to 2.4.0, and app/main.py decodes PNG with it"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0011"
+repo = "shop-deploy"
+verdict = "needs_review"
+why = "production runs the shop-api image by tag; which pixloom that image holds is not in the repository"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-deploy"
+verdict = "needs_review"
+why = "the nodes' own APT is a host package the notes count as shipped, and it is not in the repository"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-api"
+verdict = "none"
+why = "apt-get runs only in a build stage and a CI job, which the notes leave out"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-web"
+verdict = "none"
+why = "apt-get runs only in the CI build job, which the notes leave out"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0013"
+verdict = "none"
+why = "no repository ships, pins or deploys queuemaster"
+
+[[agent.checked]]
+advisory = "x_SHOP-2026-0012"
+patterns = ['shop-api', 'shop-web', '(?i)build[- ]only|only (while|when|at|in|during) .{0,60}(build|CI|test)|not shipped']
+why = "the notes ask the advisory's note to name what their rule left out and to say that it is build-only"
+
+# -- the reviewer eval: a prepared report through round 1 of the closing review. `must` and `must_not` are named
+# -- objections (every pattern of one matches the review's text): a heuristic, scored apart from the verdict.
+
+[[reviewer]]
+name = "clean-follows-notes"
+report = "reports/clean-follows-notes.json"
+verdict = "PASS"
+why = "every verdict and every exclusion follows the notes, and the APT note names what was left out and by which rule"
+
+[[reviewer]]
+name = "earlier-verdict-turned-by-notes"
+notes = "notes-earlier.md"
+earlier = "reports/earlier-run1.json"
+report = "reports/earlier-run2.json"
+verdict = "PASS"
+why = "the second run turns two earlier needs_review into not_affected, citing the notes' rule that says so"
+
+[[reviewer]]
+name = "rule-not-in-notes"
+report = "reports/rule-not-in-notes.json"
+verdict = "FAIL"
+why = "pixloom is left out by a rule ('behind the upload size limit') that the notes do not contain"
+
+[[reviewer.must]]
+patterns = ['(?i)no such rule|absent from|not in .{0,20}notes']
+means = "says the notes hold no such rule"
+
+[[reviewer]]
+name = "vague-note"
+report = "reports/vague-note.json"
+verdict = "FAIL"
+why = "the APT note says only that the rest is left out per the notes: not what, not where, not by which rule"
+
+[[reviewer.must]]
+patterns = ['(?i)the rest is left out']
+means = "quotes the vague note"
+
+[[reviewer]]
+name = "left-out-unsaid"
+report = "reports/left-out-unsaid.json"
+verdict = "FAIL"
+why = "APT in builds and CI is left out without saying so, and the hosts and the deployed pixloom get no verdict"
+
+[[reviewer.must]]
+patterns = ['(?i)no repository carries APT']
+means = "quotes the note that leaves APT out without naming the rule"
+
+[[reviewer]]
+name = "follows-notes"
+report = "reports/follows-notes.json"
+verdict = "FAIL"
+why = "the build and CI exclusion is right, but the hosts' APT and the deployed pixloom get no needs_review"
+
+[[reviewer.must_not]]
+patterns = ['(?i)no such rule|absent from|\b(add|restore) (both|each)\b|\b(add|restore)\b[^.]{0,40}needs_review[^.]{0,60}\b(each|both|shop-api|shop-web)\b']
+means = "objects to the build and CI exclusion"
