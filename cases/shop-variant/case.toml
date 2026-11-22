@@ -113,3 +113,23 @@ earlier = "reports/needs-review-for-what-ships.json"
 report = "reports/affected-after-needs-review.json"
 verdict = "PASS"
 why = "two earlier needs_review, given only because the input was not shown, become affected, and the evidence says so"
+
+[[reviewer]]
+name = "needs-review-build-unknown"
+report = "reports/needs-review-build-unknown.json"
+verdict = "FAIL"
+why = "shop-api itself pins and installs the affected pixloom; that the deployed build is unknown is shop-deploy's needs_review, not shop-api's"
+
+[[reviewer.must]]
+patterns = ['(?i)shop-api|pixloom', '(?i)\baffected\b']
+means = "asks for affected in shop-api, which pins the version itself"
+
+[[reviewer]]
+name = "not-affected-no-caller"
+report = "reports/not-affected-no-caller.json"
+verdict = "FAIL"
+why = "not_affected rests on finding no caller for the code that decodes with pixloom, which shows nothing about its use"
+
+[[reviewer.must]]
+patterns = ['(?i)pixloom|x_SHOP-2026-0011', '(?i)caller|calls|called']
+means = "objects that no caller found is no evidence that the use is outside the advisory"

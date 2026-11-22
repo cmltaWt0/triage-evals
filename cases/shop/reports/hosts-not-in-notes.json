@@ -1,0 +1,50 @@
+{
+ "summary": "Checked 3 open advisories against 3 repositories. `shop-api` pins and imports an affected `pixloom`; the version in production needs review. APT in builds and CI is left out by the team's notes, and no repository carries queuemaster.",
+ "checked": [
+  {
+   "advisory": "x_SHOP-2026-0011",
+   "note": "`shop-api` pins and imports an affected `pixloom`; `shop-deploy` deploys its image by tag, so the version in production needs review; `shop-web` does not carry it."
+  },
+  {
+   "advisory": "x_SHOP-2026-0012",
+   "note": "`apt-get` runs only in builds and CI: the `assets` build stage of `shop-api/Dockerfile:2`, the test job of `shop-api/.gitlab-ci.yml:5` and the build job of `shop-web/.gitlab-ci.yml:5`. `shop-api` and `shop-web` are left out by the notes' rule that a tool that runs only while an image is built or a test job runs is not shipped and gets no verdict; none of these files pins an APT version the advisory names. The cluster nodes' own packages are managed by the hosting provider (`shop-deploy/README.md:4`): no repository installs or lists them, and the notes do not count them as shipped."
+  },
+  {
+   "advisory": "x_SHOP-2026-0013",
+   "note": "No repository ships, pins or deploys `queuemaster`."
+  }
+ ],
+ "verdicts": [
+  {
+   "advisory": "x_SHOP-2026-0011",
+   "repo": "shop-api",
+   "verdict": "affected",
+   "evidence": "`requirements.txt:2` pins `pixloom==2.3.0`, inside the affected 2.0.0 to 2.4.0; the fixed 2.4.1 is pinned nowhere. `app/main.py:1` imports `decode_png` from it and `app/main.py:5` decodes the PNG data it is given.",
+   "where": [
+    {
+     "repo": "shop-api",
+     "file": "requirements.txt",
+     "line": 2
+    },
+    {
+     "repo": "shop-api",
+     "file": "app/main.py",
+     "line": 1
+    }
+   ]
+  },
+  {
+   "advisory": "x_SHOP-2026-0011",
+   "repo": "shop-deploy",
+   "verdict": "needs_review",
+   "evidence": "`values/production.yaml:2` and `:3` deploy the `shop-api` image at tag `1.8.2`. Which `pixloom` that image holds is not in this repository; the image's package inventory settles it.",
+   "where": [
+    {
+     "repo": "shop-deploy",
+     "file": "values/production.yaml",
+     "line": 3
+    }
+   ]
+  }
+ ]
+}

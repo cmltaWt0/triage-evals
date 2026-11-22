@@ -127,3 +127,21 @@ means = "asks for needs_review in shop-deploy for the hosts' packages"
 [[reviewer.must]]
 patterns = ['(?i)pixloom', '(?i)production\.yaml']
 means = "asks for needs_review in shop-deploy for the image deployed by tag"
+
+[[reviewer]]
+name = "hosts-not-in-notes"
+notes = "notes-silent-on-hosts.md"
+report = "reports/hosts-not-in-notes.json"
+verdict = "PASS"
+why = "these notes do not count a host's packages as shipped, and no repository installs or lists them: shop-deploy needs no verdict on APT"
+
+[[reviewer.must_not]]
+patterns = ['(?i)x_SHOP-2026-0012|APT', '(?i)shop-deploy', '(?i)(add|give|needs?) .{0,40}`?needs_review`?']
+means = "asks for a needs_review in shop-deploy for the hosts' packages"
+
+[[reviewer]]
+name = "deploy-left-out-by-notes"
+notes = "notes-deploy-out.md"
+report = "reports/deploy-left-out-by-notes.json"
+verdict = "PASS"
+why = "these notes leave shop-deploy out, and the notes in checked say so and by which rule"
