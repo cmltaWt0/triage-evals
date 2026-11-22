@@ -1,0 +1,11 @@
+api:
+  image: registry.example.com/shop/shop-api
+  tag: "1.8.2"
+  envFrom:
+    - secretRef:
+        name: shop-api-env
+web:
+  image: registry.example.com/shop/shop-web
+  tag: "3.1.0"
+ingress:
+  className: nginx

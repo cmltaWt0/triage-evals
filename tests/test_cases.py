@@ -10,9 +10,12 @@ from triage_evals import cases
 
 def test_the_cases_load_with_their_answer_key():
     by = {c.id: c for c in cases.load()}
-    assert sorted(by) == ["shop", "shop-variant", "shop-variant/affected-by-what-ships",
-                          "shop-variant/misapplied-rule", "shop-variant/needs-review-for-what-ships",
-                          "shop-variant/not-affected-on-a-claim", "shop/clean-follows-notes",
+    assert sorted(by) == ["shop", "shop-setting", "shop-setting/affected-on-a-runtime-setting",
+                          "shop-setting/follows-the-code", "shop-variant",
+                          "shop-variant/affected-after-needs-review", "shop-variant/affected-after-needs-review-said",
+                          "shop-variant/affected-by-what-ships", "shop-variant/misapplied-rule",
+                          "shop-variant/needs-review-for-what-ships", "shop-variant/not-affected-on-a-claim",
+                          "shop/clean-follows-notes",
                           "shop/earlier-verdict-turned-by-notes", "shop/follows-notes", "shop/left-out-unsaid",
                           "shop/rule-not-in-notes", "shop/vague-note"]
     key = by["shop"].spec["key"]
@@ -20,7 +23,7 @@ def test_the_cases_load_with_their_answer_key():
     assert key["x_SHOP-2026-0011/shop-web"] == ["none"]  # not listed: no verdict
     assert by["shop-variant"].spec["key"]["x_SHOP-2026-0014/shop-deploy"] == ["needs_review", "none"]
     assert by["shop/earlier-verdict-turned-by-notes"].notes().name == "notes-earlier.md"
-    assert [c.id for c in cases.select(list(by.values()), "agent", "shop*")] == ["shop", "shop-variant"]
+    assert [c.id for c in cases.select(list(by.values()), "agent", "shop*")] == ["shop", "shop-setting", "shop-variant"]
 
 
 @pytest.mark.parametrize("entry, says", [
@@ -57,7 +60,7 @@ def test_an_invented_advisory_cannot_be_taken_for_a_real_one():
     runner's reading of the record drops, so no model sees it."""
     from arceus_runner.advisory_files import read_record
     paths = sorted((cases.ROOT / "cases").glob("*/advisories/*.json"))
-    assert len(paths) == 7
+    assert len(paths) == 12
     for path in paths:
         rec = json.loads(path.read_text())
         assert "invented" in rec["database_specific"]["note"].lower(), path

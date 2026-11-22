@@ -1,0 +1,46 @@
+{
+ "id": "x_SHOP-2026-0015",
+ "modified": "2026-11-14T09:00:00Z",
+ "published": "2026-11-14T09:00:00Z",
+ "aliases": [
+  "EXAMPLE-2026-0015"
+ ],
+ "summary": "tokenbrine: session tokens are accepted without a signature check in legacy mode (CVSS 8.2)",
+ "details": "tokenbrine 4.0.0 to 4.2.2 accepts a session token without checking its signature when legacy mode is on (the `legacy` option of `Verifier`, off by default). A service that runs these versions with legacy mode on lets anyone sign in as any user. With legacy mode off these versions are not affected. Fixed in tokenbrine 4.2.3.",
+ "affected": [
+  {
+   "package": {
+    "ecosystem": "PyPI",
+    "name": "tokenbrine"
+   },
+   "ranges": [
+    {
+     "type": "ECOSYSTEM",
+     "events": [
+      {
+       "introduced": "4.0.0"
+      },
+      {
+       "fixed": "4.2.3"
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "references": [
+  {
+   "type": "ADVISORY",
+   "url": "https://advisories.example.com/SHOP-2026-0015"
+  }
+ ],
+ "database_specific": {
+  "note": "Invented for the triage-evals test cases. Not a real advisory: it describes no real vulnerability."
+ },
+ "severity": [
+  {
+   "type": "CVSS_V3",
+   "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:L/A:N"
+  }
+ ]
+}

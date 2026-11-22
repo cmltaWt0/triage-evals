@@ -1,0 +1,94 @@
+# The shop-variant project with two changes. app/sync.py clones only a URL fixed in the code, so the code shows that
+# the service's use of gitpebble is outside what its advisory describes. And shop-api pins tokenbrine, which a fifth
+# advisory names as affected only with legacy mode on: app/auth.py takes that setting from the environment at run
+# time, and shop-deploy takes the environment from a secret that is in no repository. Nothing here is real.
+
+repos = ["shop-api", "shop-web", "shop-deploy"]  # in the order the code host lists them
+
+# -- the agent and e2e evals. A cell not listed expects no verdict.
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0011"
+repo = "shop-api"
+verdict = "affected"
+why = "requirements.txt pins pixloom 2.3.0, the image installs it and app/main.py decodes PNG with it; where the bytes come from does not decide"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0011"
+repo = "shop-deploy"
+verdict = "needs_review"
+why = "production runs the shop-api image by tag; which pixloom that image holds is not in the repository"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-deploy"
+verdict = "needs_review"
+why = "the nodes' own APT is a host package the notes count as shipped, and it is not in the repository"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-api"
+verdict = "none"
+why = "apt-get runs only while the images are built and in a CI job, which the notes leave out"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0012"
+repo = "shop-web"
+verdict = "none"
+why = "apt-get runs only in the CI build job, which the notes leave out"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0013"
+verdict = "none"
+why = "no repository ships, pins or deploys queuemaster"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0014"
+repo = "shop-api"
+verdict = ["not_affected", "affected"]
+why = "the affected gitpebble ships, but app/sync.py clones only a URL fixed in the code: not_affected on that evidence, or affected for the version alone"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0014"
+repo = "shop-deploy"
+verdict = ["needs_review", "none"]
+why = "what the deployed image holds is not in the repository; this cell is left open"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0015"
+repo = "shop-api"
+verdict = "needs_review"
+why = "the affected tokenbrine is pinned, but the advisory needs legacy mode on, and that setting is decided at run time outside the repository"
+
+[[agent.cell]]
+advisory = "x_SHOP-2026-0015"
+repo = "shop-deploy"
+verdict = ["needs_review", "none"]
+why = "the API's environment comes from a secret that is not in the repository; this cell is left open"
+
+[[agent.checked]]
+advisory = "x_SHOP-2026-0012"
+patterns = ['shop-api', 'shop-web', '(?i)build[- ]only|only (while|when|at|in|during) .{0,60}(build|CI|test)|not shipped']
+why = "the notes ask the advisory's note to name what their rule left out and to say that it is build-only"
+
+# -- the reviewer eval
+
+[[reviewer]]
+name = "follows-the-code"
+report = "reports/follows-the-code.json"
+verdict = "PASS"
+why = "affected for the version that ships, not_affected where the code shows the use is outside the advisory, needs_review for the setting decided at run time"
+
+[[reviewer.must_not]]
+patterns = ['(?i)gitpebble|x_SHOP-2026-0014', '(?i)(change|should be|must be|use|give)\W+(the verdict to\W+)?`?affected`?']
+means = "asks for affected where the code shows the use is outside the advisory"
+
+[[reviewer]]
+name = "affected-on-a-runtime-setting"
+report = "reports/affected-on-a-runtime-setting.json"
+verdict = "FAIL"
+why = "tokenbrine is given affected for the pinned version alone, though the advisory needs a setting that is decided at run time"
+
+[[reviewer.must]]
+patterns = ['(?i)tokenbrine|x_SHOP-2026-0015', '(?i)needs_review']
+means = "asks for needs_review where a run-time setting decides"

@@ -38,9 +38,10 @@ def test_the_reviewer_eval_reviews_the_cases_report_after_its_earlier_run(evals,
 
 def test_the_agent_eval_scores_what_the_runner_kept(evals, tmp_path, capsys):
     res = evals("agent", "--cases", "shop*", "--agent-answer", str(REPORTS / "clean-follows-notes.json"))
-    assert [(c["id"], c["passed"]) for c in res["cases"]] == [("shop", 1), ("shop-variant", 0)]
-    assert "| **total** | **1/2** | 1 of 2 cases in every sample |" in capsys.readouterr().out
-    assert res["cases"][1]["samples"][0]["misses"] == ["x_SHOP-2026-0014/shop-api"]
+    assert [(c["id"], c["passed"]) for c in res["cases"]] == [("shop", 1), ("shop-setting", 0), ("shop-variant", 0)]
+    assert "| **total** | **1/3** | 1 of 3 cases in every sample |" in capsys.readouterr().out
+    assert res["cases"][1]["samples"][0]["misses"] == ["x_SHOP-2026-0014/shop-api", "x_SHOP-2026-0015/shop-api"]
+    assert res["cases"][2]["samples"][0]["misses"] == ["x_SHOP-2026-0014/shop-api"]
     broken = json.loads((REPORTS / "clean-follows-notes.json").read_text())
     broken["verdicts"][0]["where"] = [{"repo": "shop-api", "file": "app/missing.py", "line": 1}]
     (tmp_path / "broken.json").write_text(json.dumps(broken))

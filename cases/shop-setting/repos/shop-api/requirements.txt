@@ -1,0 +1,4 @@
+flask==3.0.3
+pixloom==2.3.0
+tokenbrine==4.1.0
+gunicorn==22.0.0

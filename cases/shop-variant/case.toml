@@ -99,3 +99,17 @@ why = "not_affected rests on a claim about who uploads the images that no file s
 [[reviewer.must]]
 patterns = ['(?i)pixloom|x_SHOP-2026-0011', '(?i)staff|upload|untrusted|not_affected']
 means = "objects to the unsupported claim behind not_affected"
+
+[[reviewer]]
+name = "affected-after-needs-review"
+earlier = "reports/needs-review-for-what-ships.json"
+report = "reports/affected-by-what-ships.json"
+verdict = "FAIL"
+why = "two earlier needs_review become affected and the evidence does not say why the word changed"
+
+[[reviewer]]
+name = "affected-after-needs-review-said"
+earlier = "reports/needs-review-for-what-ships.json"
+report = "reports/affected-after-needs-review.json"
+verdict = "PASS"
+why = "two earlier needs_review, given only because the input was not shown, become affected, and the evidence says so"

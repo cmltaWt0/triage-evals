@@ -1,0 +1,9 @@
+image: node:20
+
+build:
+  script:
+    - apt-get update && apt-get install -y --no-install-recommends jq
+    - npm ci
+    - npm run build
+  artifacts:
+    paths: [dist/]
