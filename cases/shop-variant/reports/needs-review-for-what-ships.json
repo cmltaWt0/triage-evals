@@ -15,7 +15,7 @@
   },
   {
    "advisory": "x_SHOP-2026-0014",
-   "note": "`shop-api` installs `gitpebble=3.1.0-1` in the final stage of its image and the service runs it, so it is shipped, not build-only; `shop-deploy` deploys that image by tag, so the version in production needs review; `shop-web` does not carry it."
+   "note": "`shop-api` installs `gitpebble=3.1.0-1` in the final stage of its image and its application code invokes it (`app/sync.py:6`), so it is shipped, not build-only; `shop-deploy` deploys that image by tag, so the version in production needs review; `shop-web` does not carry it."
   }
  ],
  "verdicts": [
@@ -72,7 +72,7 @@
    "advisory": "x_SHOP-2026-0014",
    "repo": "shop-api",
    "verdict": "needs_review",
-   "evidence": "`Dockerfile:8` installs `gitpebble=3.1.0-1` in the final stage of the image, inside the affected range (from 3.0.0, fixed in 3.2.0), and `app/sync.py:6` runs `gitpebble clone` in the service with the `url` that `import_catalog()` is given. The advisory is about cloning a URL the service does not control; the caller is not in the repository, which does not show what URLs reach it. The admin API's code and what it accepts as a URL would settle it.",
+   "evidence": "`Dockerfile:8` installs `gitpebble=3.1.0-1` in the final stage of the image, inside the affected range (from 3.0.0, fixed in 3.2.0), and `app/sync.py:6` is application code that invokes `gitpebble clone` with the `url` that `import_catalog()` is given. The advisory is about cloning a URL the service does not control; no caller is in the repository, which does not show what URLs reach it. The admin API's code and what it accepts as a URL would settle it.",
    "where": [
     {
      "repo": "shop-api",
