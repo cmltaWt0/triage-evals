@@ -7,7 +7,7 @@
   },
   {
    "advisory": "x_SHOP-2026-0012",
-   "note": "`apt-get` runs only in builds and CI: the `assets` build stage of `shop-api/Dockerfile:2`, the test job of `shop-api/.gitlab-ci.yml:5` and the build job of `shop-web/.gitlab-ci.yml:5`. `shop-api` and `shop-web` are left out by the notes' rule that a tool that runs only while an image is built or a test job runs is not shipped and gets no verdict; none of these files pins an APT version the advisory names. The cluster nodes' own packages are managed by the hosting provider (`shop-deploy/README.md:4`): no repository installs or lists them, and the notes do not count them as shipped."
+   "note": "`apt-get` runs only in builds and CI: the `assets` build stage of `shop-api/Dockerfile:2`, the test job of `shop-api/.gitlab-ci.yml:5` and the build job of `shop-web/.gitlab-ci.yml:5`. `shop-api` and `shop-web` are left out by the notes' rule that a tool that runs only while an image is built or a test job runs is not shipped and gets no verdict; none of these files pins an APT version the advisory names. The cluster nodes' own packages are managed by the hosting provider (`shop-deploy/README.md:4`): no repository installs or lists them."
   },
   {
    "advisory": "x_SHOP-2026-0013",
