@@ -69,3 +69,33 @@ why = "gitpebble is called build-only, but the final image installs it and the d
 [[reviewer.must]]
 patterns = ['(?i)gitpebble', 'sync\.py']
 means = "points at the deployed service's own call of gitpebble (app/sync.py)"
+
+[[reviewer]]
+name = "affected-by-what-ships"
+report = "reports/affected-by-what-ships.json"
+verdict = "PASS"
+why = "an affected version that is pinned, installed into the image and used is affected, and the evidence claims nothing about the input it does not show"
+
+[[reviewer.must_not]]
+patterns = ['(?i)needs_review', '(?i)shop-api']
+means = "asks for needs_review in shop-api because an attack is not shown to be possible"
+
+[[reviewer]]
+name = "needs-review-for-what-ships"
+report = "reports/needs-review-for-what-ships.json"
+verdict = "FAIL"
+why = "the same affected versions ship, and needs_review is given only because the repository does not show that untrusted input reaches them"
+
+[[reviewer.must]]
+patterns = ['(?i)shop-api|pixloom|gitpebble', '(?i)\baffected\b']
+means = "asks for affected where the affected version ships"
+
+[[reviewer]]
+name = "not-affected-on-a-claim"
+report = "reports/not-affected-on-a-claim.json"
+verdict = "FAIL"
+why = "not_affected rests on a claim about who uploads the images that no file shows"
+
+[[reviewer.must]]
+patterns = ['(?i)pixloom|x_SHOP-2026-0011', '(?i)staff|upload|untrusted|not_affected']
+means = "objects to the unsupported claim behind not_affected"

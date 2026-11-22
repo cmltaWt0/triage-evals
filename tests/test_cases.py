@@ -10,7 +10,9 @@ from triage_evals import cases
 
 def test_the_cases_load_with_their_answer_key():
     by = {c.id: c for c in cases.load()}
-    assert sorted(by) == ["shop", "shop-variant", "shop-variant/misapplied-rule", "shop/clean-follows-notes",
+    assert sorted(by) == ["shop", "shop-variant", "shop-variant/affected-by-what-ships",
+                          "shop-variant/misapplied-rule", "shop-variant/needs-review-for-what-ships",
+                          "shop-variant/not-affected-on-a-claim", "shop/clean-follows-notes",
                           "shop/earlier-verdict-turned-by-notes", "shop/follows-notes", "shop/left-out-unsaid",
                           "shop/rule-not-in-notes", "shop/vague-note"]
     key = by["shop"].spec["key"]

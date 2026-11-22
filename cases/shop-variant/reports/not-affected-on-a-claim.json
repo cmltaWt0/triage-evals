@@ -1,0 +1,103 @@
+{
+ "summary": "Checked 4 open advisories against 3 repositories. `shop-api` ships an affected `gitpebble` and is affected there; it also ships an affected `pixloom`, but decodes only images the shop's own staff upload, so it is not affected by that advisory. Which versions the image deployed to production holds, and the APT on the provider's nodes, need review in `shop-deploy`. APT in builds and CI is left out as build-only under the stack notes, and no repository carries `queuemaster`.",
+ "checked": [
+  {
+   "advisory": "x_SHOP-2026-0011",
+   "note": "`shop-api` pins `pixloom==2.3.0` and installs it into its image, but decodes only the staff's own uploads; `shop-deploy` deploys that image by tag, so the version in production needs review; `shop-web` does not carry it."
+  },
+  {
+   "advisory": "x_SHOP-2026-0012",
+   "note": "The nodes' own APT needs review (`shop-deploy`). `apt-get` otherwise runs only in builds and CI: the `assets` build stage of `shop-api/Dockerfile:2` and the build of its final stage (`shop-api/Dockerfile:8`), the test job of `shop-api/.gitlab-ci.yml:5` and the build job of `shop-web/.gitlab-ci.yml:5`. `shop-api` and `shop-web` are left out by the notes' rule that a tool that runs only while an image is built or a test job runs is not shipped and gets no verdict; none of these files pins an APT version the advisory names."
+  },
+  {
+   "advisory": "x_SHOP-2026-0013",
+   "note": "No repository ships, pins or deploys `queuemaster`."
+  },
+  {
+   "advisory": "x_SHOP-2026-0014",
+   "note": "`shop-api` installs `gitpebble=3.1.0-1` in the final stage of its image and the service runs it, so it is shipped, not build-only; `shop-deploy` deploys that image by tag, so the version in production needs review; `shop-web` does not carry it."
+  }
+ ],
+ "verdicts": [
+  {
+   "advisory": "x_SHOP-2026-0011",
+   "repo": "shop-api",
+   "verdict": "not_affected",
+   "evidence": "`requirements.txt:2` pins `pixloom==2.3.0`, inside the affected range (from 2.0.0, fixed in 2.4.1), and `app/main.py:5` decodes PNG data with it. The advisory needs PNG files from untrusted sources. The shop's product images are uploaded by its own staff through the admin, so no untrusted PNG reaches `thumbnail()`: its use is outside what the advisory describes.",
+   "where": [
+    {
+     "repo": "shop-api",
+     "file": "requirements.txt",
+     "line": 2
+    },
+    {
+     "repo": "shop-api",
+     "file": "Dockerfile",
+     "line": 11
+    },
+    {
+     "repo": "shop-api",
+     "file": "app/main.py",
+     "line": 5
+    }
+   ]
+  },
+  {
+   "advisory": "x_SHOP-2026-0011",
+   "repo": "shop-deploy",
+   "verdict": "needs_review",
+   "evidence": "`values/production.yaml:3` deploys the `shop-api` image at tag `1.8.2`. Which `pixloom` that image holds depends on the commit it was built from, and that is not in this repository. The image's package inventory settles it (`pip show pixloom` in the image): affected from 2.0.0, fixed in 2.4.1.",
+   "where": [
+    {
+     "repo": "shop-deploy",
+     "file": "values/production.yaml",
+     "line": 3
+    }
+   ]
+  },
+  {
+   "advisory": "x_SHOP-2026-0012",
+   "repo": "shop-deploy",
+   "verdict": "needs_review",
+   "evidence": "The stack notes count a host's own packages as shipped. `README.md:4` says the cluster's nodes are managed by the hosting provider and that their packages are not in this repository, so the APT version on the production nodes is recorded nowhere in the code. It would be settled by the nodes' OS (Debian 12 or Ubuntu 24.04), the `apt` version installed there (affected: 2.6.0 to 2.6.1 or 2.7.0 to 2.8.3; fixed: 2.6.2 or 2.8.4), and whether packages are installed on the nodes over a network the provider does not control.",
+   "where": [
+    {
+     "repo": "shop-deploy",
+     "file": "README.md",
+     "line": 4
+    }
+   ]
+  },
+  {
+   "advisory": "x_SHOP-2026-0014",
+   "repo": "shop-api",
+   "verdict": "affected",
+   "evidence": "`Dockerfile:8` installs `gitpebble=3.1.0-1` in the final stage of the image, inside the affected range (from 3.0.0, fixed in 3.2.0). It is not build-only: `app/sync.py:6` runs `gitpebble clone` in the service with the `url` that `import_catalog()` is given. `app/sync.py:5` says the admin API calls it; that caller is not in the repository, which does not show what URLs reach it.",
+   "where": [
+    {
+     "repo": "shop-api",
+     "file": "Dockerfile",
+     "line": 8
+    },
+    {
+     "repo": "shop-api",
+     "file": "app/sync.py",
+     "line": 6
+    }
+   ]
+  },
+  {
+   "advisory": "x_SHOP-2026-0014",
+   "repo": "shop-deploy",
+   "verdict": "needs_review",
+   "evidence": "`values/production.yaml:3` deploys the `shop-api` image at tag `1.8.2`. Which `gitpebble` that image holds depends on the commit it was built from, and that is not in this repository. The image's package inventory settles it (`dpkg -s gitpebble` in the image): affected from 3.0.0, fixed in 3.2.0.",
+   "where": [
+    {
+     "repo": "shop-deploy",
+     "file": "values/production.yaml",
+     "line": 3
+    }
+   ]
+  }
+ ]
+}
