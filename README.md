@@ -71,8 +71,8 @@ efforts asked for and as the CLIs reported them, the date, the cases' content ha
 the verdict or the verdicts, the review's text, the seconds, what was expected and the score. Then it prints the report.
 
 ```sh
-./evals report results/reviewer-20261121-220000-c6b9bb3.json
-./evals compare results/baselines/reviewer-c6b9bb3.json results/reviewer-20261122-090000-d1e2f3a.json
+./evals report results/reviewer-20261124-101037-0f12cdb.json
+./evals compare results/baselines/reviewer-0f12cdb.json results/reviewer-20261125-090000-d1e2f3a.json
 ```
 
 `report` prints a Markdown table, as readable in a terminal: per case the pass rate (`3/3`) and what happened (the
