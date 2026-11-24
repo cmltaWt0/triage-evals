@@ -3,7 +3,7 @@ import json
 from conftest import RECORDED
 from triage_evals import cases, engine, score
 
-CASES = {c.id: c for c in cases.load()}
+CASES = {c.id: c for c in cases.load(folders=("cases",))}
 
 
 def scored(cid: str, texts: list[str]) -> list[dict]:

@@ -87,7 +87,10 @@ class Triage:
         raw["bulava"]["mcp_config"] = None
         raw["health"].pop("devstack_check", None)
         raw["health"].update(disk_fail_percent=1, disk_warn_percent=2)
-        raw["secops"] = {"enabled": True, "register": {"type": "files", "advisories": str(case.folder / "advisories")},
+        replay = case.folder / "advisories.json"  # a case from a real run: its advisories as the run was given them
+        register = {"type": "triage_evals.replay", "advisories": str(replay)} if replay.is_file() else \
+            {"type": "files", "advisories": str(case.folder / "advisories")}
+        raw["secops"] = {"enabled": True, "register": register,
                          "reports": str(state / "secops-reports"), "instructions": str(state / "instructions.md"),
                          "post": False, "slack": False}
         self.cfg = cfg = Config.model_validate(raw)

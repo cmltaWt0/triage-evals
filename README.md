@@ -129,6 +129,22 @@ package that is in no public registry (look it up in the ecosystem the record na
 before choosing), and say in `database_specific.note` that it is invented: the runner does not pass that field on, so
 no model reads it. A test holds the cases here to the alias and the note.
 
+### A case from a real run
+
+A real run is the best test of the review, and it belongs in `cases-private/`. Take from the runner's database and
+the run's folder: the advisories as the run was given them (its `advisories.json`, without `earlier`), the notes the
+run started with, its report (`summary`, `checked`, `verdicts`), and, for a run whose advisories had earlier verdicts,
+the earlier run's report. Put each repository under `repos/<name>/` as it was at the commit read (`git archive`), with
+`<name>` the path under the code host's group, `sub/name` included. With an `advisories.json` in the folder, the
+runner gets its advisories from `triage_evals/replay.py` instead of the OSV records, so ids, facts and texts are the
+run's own. Give the case's `repos` in the order the run listed them, and say in each `why` what is known of the
+expected answer: that a real review passed a report is not the same as a person having checked its verdicts.
+
+What differs from the real run: the repositories have one commit each, with other commit ids; every repository's
+default branch is `main`; the workspace path is longer, so the reviewer's first 6,000 bytes of the brief end a little
+earlier. Running such a case sends the project's code and advisories to the reviewing and agent models: make sure the
+accounts they run under may receive them.
+
 ## Tests
 
 No model and no network; the run path uses the stand-ins:

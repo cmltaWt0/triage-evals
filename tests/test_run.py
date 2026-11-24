@@ -1,6 +1,7 @@
 """The whole `run` path on the Arceus checkout's runner, with a stand-in reviewer and a stand-in agent."""
 import json
 import re
+import shutil
 import subprocess
 
 from conftest import ARCEUS, ENGINE
@@ -96,3 +97,38 @@ def test_the_agent_is_a_headless_claude_session_given_the_runners_brief(evals, t
     assert re.findall(r"^- `(shop-[a-z]+)` \(main\)", prompt, re.M) == ["shop-api", "shop-web", "shop-deploy"]
     assert res["target"]["claude"] == "9.9 (Claude Code)" and res["reported"]["agent"] == ["m-agent"]
     assert res["cases"][0]["passed"] == 1
+
+
+def test_a_case_from_a_real_run_gets_the_advisories_that_run_was_given(evals, monkeypatch, tmp_path):
+    """advisories.json instead of OSV records: ids, facts and texts reach the agent and the reviewer unchanged, and a
+    repository may sit under a group path, as on a real code host."""
+    shop, case = cases.ROOT / "cases" / "shop", tmp_path / "cases" / "replayed"
+    shutil.copytree(shop / "repos" / "shop-api", case / "repos" / "sub" / "shop-api")
+    for name in ("shop-web", "shop-deploy"):
+        shutil.copytree(shop / "repos" / name, case / "repos" / name)
+    shutil.copyfile(shop / "notes.md", case / "notes.md")
+    given = [{"id": 41, "ref": "SEC-41", "title": "pixloom: heap overflow", "text": "pixloom before 2.4.1 overflows.",
+              "facts": {"identifiers": ["EXAMPLE-41"], "kev": True, "fixed": ["2.4.1"]}}]
+    (case / "advisories.json").write_text(json.dumps(given))
+    verdict = {"advisory": 41, "repo": "sub/shop-api", "verdict": "affected", "evidence": "e",
+               "where": [{"repo": "sub/shop-api", "file": "requirements.txt", "line": 2}]}
+    checked = [{"advisory": 41, "note": "n"}]
+    (case / "report.json").write_text(json.dumps({"summary": "One advisory.", "checked": checked,
+                                                  "verdicts": [verdict]}))
+    (case / "case.toml").write_text('repos = ["sub/shop-api", "shop-web", "shop-deploy"]\n[[reviewer]]\nname = "r"\n'
+                                    'report = "report.json"\nverdict = "PASS"\nwhy = "w"\n')
+    seen = []
+
+    def ask(prompt, cwd):
+        folder = sorted((cwd / ".arceus" / "secops").iterdir())[-1]
+        seen.append((json.loads((folder / "advisories.json").read_text()), prompt,
+                     (cwd / "sub" / "shop-api" / "requirements.txt").is_file()))
+        return {"answer": PASS, "rc": 0, "seconds": 0, "model": "stand-in"}
+    monkeypatch.setattr(cli.engine, "canned", lambda path: ask)
+    real = cases.load
+    monkeypatch.setattr(cli.cases, "load", lambda: real(tmp_path))
+    res = evals("reviewer", "--cases", "replayed/*", "--reviewer-answer", "-")
+    assert [(c["id"], c["passed"]) for c in res["cases"]] == [("replayed/r", 1)]
+    (advisories, prompt, cloned), = seen
+    assert advisories == [{**given[0], "earlier": []}] and cloned
+    assert "- `sub/shop-api` (main): checked out at" in prompt

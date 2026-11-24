@@ -64,7 +64,8 @@ def test_the_verdict_is_read_as_the_gate_reads_it(answer, verdict):
 
 
 def test_without_an_engine_given_the_commit_the_checkout_pins_is_fetched_into_the_work_folder(tmp_path):
-    repo = cases.materialize(next(c for c in cases.load() if c.id == "shop"), tmp_path / "src")["shop-web"]
+    shop = next(c for c in cases.load(folders=("cases",)) if c.id == "shop")
+    repo = cases.materialize(shop, tmp_path / "src")["shop-web"]
     (repo / "engine" / "hooks").mkdir(parents=True)
     (repo / "engine" / GATE).write_text("the gate")
     for args in (["add", "-A"], ["-c", "user.name=T", "-c", "user.email=t@example.com", "commit", "-qm", "engine"]):

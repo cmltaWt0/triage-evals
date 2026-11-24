@@ -1,5 +1,6 @@
 """Cases as data. A folder per project under cases/ (or cases-private/, which git ignores) holds the repositories as
-plain file trees (repos/<name>/), the advisories as OSV records (advisories/), the team's notes (notes.md), prepared
+plain file trees (repos/<name>/), the advisories as OSV records (advisories/) or, for a case taken from a real run, as
+the run was given them (advisories.json, replay.py), the team's notes (notes.md), prepared
 reports, and case.toml: its reviewer cases and its answer key for the agent and e2e evals, each entry with its `why`."""
 import fnmatch
 import hashlib
@@ -35,8 +36,8 @@ class Case:
         return path if path.is_file() else None
 
 
-def load(root: Path = ROOT) -> list[Case]:
-    out = [c for top in FOLDERS for toml in sorted((root / top).glob("*/case.toml")) for c in _read(toml)]
+def load(root: Path = ROOT, folders: tuple[str, ...] = FOLDERS) -> list[Case]:
+    out = [c for top in folders for toml in sorted((root / top).glob("*/case.toml")) for c in _read(toml)]
     ids = [c.id for c in out]
     if len(set(ids)) != len(ids):
         raise CaseError(f"two cases have the same name: {sorted({i for i in ids if ids.count(i) > 1})}")
@@ -70,7 +71,9 @@ def _read(path: Path) -> list[Case]:
             _need(path, o, "patterns", "means")
         out.append(Case(f"{folder.name}/{r['name']}", "reviewer", folder, repos, r, h))
     if "agent" in d:
-        ids = [json.loads(p.read_text())["id"] for p in sorted((folder / "advisories").glob("*.json"))]
+        replay = folder / "advisories.json"
+        ids = [a["id"] for a in json.loads(replay.read_text())] if replay.is_file() else \
+            [json.loads(p.read_text())["id"] for p in sorted((folder / "advisories").glob("*.json"))]
         key = {f"{a}/{r}": ["none"] for a in ids for r in repos}  # a cell not listed expects no verdict
         for c in d["agent"].get("cell", []):
             _need(path, c, "advisory", "verdict", "why")
@@ -102,8 +105,9 @@ def materialize(case: Case, dest: Path) -> dict[str, Path]:
     out = {}
     for name in case.repos:
         d = dest / name
-        shutil.copytree(case.folder / "repos" / name, d)
-        for args in (["init", "-q", "-b", "main"], ["add", "-A"], ["commit", "-q", "-m", "The project as it is"]):
+        shutil.copytree(case.folder / "repos" / name, d, symlinks=True)  # a real tree may hold dangling links
+        # -f: a file the project tracks although its .gitignore matches it is part of the tree too
+        for args in (["init", "-q", "-b", "main"], ["add", "-A", "-f"], ["commit", "-q", "-m", "The project as it is"]):
             subprocess.run(["git", "-c", "user.name=Case", "-c", "user.email=case@example.com", *args], cwd=d,
                            env=env, check=True, capture_output=True)
         out[name] = d

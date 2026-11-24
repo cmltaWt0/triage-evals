@@ -9,7 +9,7 @@ from triage_evals import cases
 
 
 def test_the_cases_load_with_their_answer_key():
-    by = {c.id: c for c in cases.load()}
+    by = {c.id: c for c in cases.load(folders=("cases",))}
     assert sorted(by) == ["shop", "shop-setting", "shop-setting/affected-on-a-runtime-setting",
                           "shop-setting/follows-the-code", "shop-variant",
                           "shop-variant/affected-after-needs-review", "shop-variant/affected-after-needs-review-said",
@@ -41,7 +41,7 @@ def test_a_case_that_says_less_than_it_must_is_refused(tmp_path, entry, says):
 
 
 def test_a_case_makes_the_same_commits_every_time(tmp_path):
-    case = next(c for c in cases.load() if c.id == "shop")
+    case = next(c for c in cases.load(folders=("cases",)) if c.id == "shop")
     heads = {name: subprocess.run(["git", "-C", str(d), "rev-parse", "HEAD"], capture_output=True,
                                   text=True).stdout.strip() for name, d in cases.materialize(case, tmp_path).items()}
     assert heads == {"shop-api": "8294042137b67dd07fed4a6a1e9ec39ed789170c",
@@ -68,3 +68,17 @@ def test_an_invented_advisory_cannot_be_taken_for_a_real_one():
         assert "invented" in rec["database_specific"]["note"].lower(), path
         assert not [a for a in rec["aliases"] if re.match(r"(?i)(CVE|GHSA)-", a)], path
         assert "nvented" not in repr(read_record(path)), path
+
+
+def test_a_real_tree_is_committed_whole(tmp_path):
+    """A file the project's own .gitignore matches is tracked all the same in a real repository, and a link may point
+    nowhere: the case's repository holds both, as the tree does."""
+    shutil.copytree(cases.ROOT / "cases" / "shop", tmp_path / "cases" / "whole")
+    web = tmp_path / "cases" / "whole" / "repos" / "shop-web"
+    (web / ".gitignore").write_text("*.lock\n")
+    (web / "yarn.lock").write_text("pinned\n")
+    (web / "gone").symlink_to("nowhere")
+    case = next(c for c in cases.load(tmp_path) if c.id == "whole")
+    d = cases.materialize(case, tmp_path / "out")["shop-web"]
+    tracked = subprocess.run(["git", "-C", str(d), "ls-files"], capture_output=True, text=True).stdout.split()
+    assert {"yarn.lock", "gone", ".gitignore"} <= set(tracked)
